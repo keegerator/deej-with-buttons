@@ -1,11 +1,16 @@
-const int NUM_SLIDERS = 5;
-const int analogInputs[NUM_SLIDERS] = {A0, A1, A2, A3, A4};
+const int NUM_SLIDERS = 4;
+const int NUM_BUTTONS = 5;
+
+const int analogSliderInputs[NUM_SLIDERS] = {A0, A1, A2, A3};
+const int digitalButtonInputs[NUM_BUTTONS] = {2, 3, 4, 5, 6};
 
 int analogSliderValues[NUM_SLIDERS];
+int analogButtonValues[NUM_BUTTONS];
 
 void setup() { 
   for (int i = 0; i < NUM_SLIDERS; i++) {
-    pinMode(analogInputs[i], INPUT);
+    pinMode(analogSliderInputs[i], INPUT);
+    pinMode(analogButtonInputs[i], INPUT);
   }
 
   Serial.begin(9600);
@@ -14,13 +19,23 @@ void setup() {
 void loop() {
   updateSliderValues();
   sendSliderValues(); // Actually send data (all the time)
-  // printSliderValues(); // For debug
+  printSliderValues(); // For debug
+
+  updateButtonValues();
+  sendButtonValues(); // Actually send data (all the time)
+  printButtonValues(); // For debug
   delay(10);
 }
 
 void updateSliderValues() {
   for (int i = 0; i < NUM_SLIDERS; i++) {
-     analogSliderValues[i] = analogRead(analogInputs[i]);
+     analogSliderValues[i] = analogRead(analogSliderInputs[i]);
+  }
+}
+
+void updateButtonValues() {
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+     analogButtonValues[i] = digitalRead(analogButtonInputs[i]);
   }
 }
 
@@ -31,6 +46,20 @@ void sendSliderValues() {
     builtString += String((int)analogSliderValues[i]);
 
     if (i < NUM_SLIDERS - 1) {
+      builtString += String("|");
+    }
+  }
+  
+  Serial.println(builtString);
+}
+
+void sendButtonValues() {
+  String builtString = String("");
+
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    builtString += String((int)analogButtonValues[i]);
+
+    if (i < NUM_BUTTONS - 1) {
       builtString += String("|");
     }
   }
@@ -49,4 +78,16 @@ void printSliderValues() {
       Serial.write("\n");
     }
   }
+}
+
+void printButtonValues() {
+    for (int i = 0; i < NUM_BUTTONS; i++) {
+    String printedString = String("Button #") + String(i + 1) + String(": ") + String(analogButtonValues[i]) + String(" mV");
+    Serial.write(printedString.c_str());
+
+    if (i < NUM_BUTTONS - 1) {
+      Serial.write(" | ");
+    } else {
+      Serial.write("\n");
+    }
 }
