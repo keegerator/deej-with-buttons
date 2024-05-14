@@ -7,6 +7,8 @@ const int digitalButtonInputs[NUM_BUTTONS] = {2, 3, 4, 5, 6};
 int analogSliderValues[NUM_SLIDERS];
 int analogButtonValues[NUM_BUTTONS];
 
+bool isMuted[NUM_BUTTONS] = {0, 0, 0, 0, 0};
+
 void setup() { 
   for (int i = 0; i < NUM_SLIDERS; i++) {
     pinMode(analogSliderInputs[i], INPUT);
@@ -27,6 +29,15 @@ void loop() {
   updateButtonValues();
   sendButtonValues(); // Actually send data (all the time)
   printButtonValues(); // For debug
+
+  for (int i; i < isMuted; i++) {
+    if (isMuted[i]) {
+      // send faux slider value to keep muted
+    } else {
+      // send actual slider value
+    }
+  }
+
   delay(10);
 }
 
@@ -60,6 +71,10 @@ void sendButtonValues() {
   String builtString = String("");
 
   for (int i = 0; i < NUM_BUTTONS; i++) {
+    if (analogButtonValues[i] == 1) {
+      isMuted[i] = true;
+    }
+
     builtString += String((int)analogButtonValues[i]);
 
     if (i < NUM_BUTTONS - 1) {
