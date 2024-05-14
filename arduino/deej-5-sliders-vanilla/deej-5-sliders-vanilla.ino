@@ -10,7 +10,10 @@ int analogButtonValues[NUM_BUTTONS];
 void setup() { 
   for (int i = 0; i < NUM_SLIDERS; i++) {
     pinMode(analogSliderInputs[i], INPUT);
-    pinMode(analogButtonInputs[i], INPUT);
+  }
+
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    pinMode(digitalButtonInputs[i], INPUT_PULLUP);
   }
 
   Serial.begin(9600);
@@ -35,7 +38,7 @@ void updateSliderValues() {
 
 void updateButtonValues() {
   for (int i = 0; i < NUM_BUTTONS; i++) {
-     analogButtonValues[i] = digitalRead(analogButtonInputs[i]);
+     analogButtonValues[i] = digitalRead(digitalButtonInputs[i]);
   }
 }
 
@@ -90,4 +93,5 @@ void printButtonValues() {
     } else {
       Serial.write("\n");
     }
+  }
 }
